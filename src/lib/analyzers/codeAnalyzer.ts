@@ -35,7 +35,7 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
 
   // Step 4: Call AI for analysis (or use demo mode)
   const aiResponse = isDemoMode()
-    ? getDemoAnalysis(codeToAnalyze)
+    ? getDemoAnalysis(codeToAnalyze, reviewTypes)
     : await analyzeCodeWithClaude(codeToAnalyze, language, reviewTypes);
 
   // Step 5: Calculate score and grade

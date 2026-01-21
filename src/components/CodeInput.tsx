@@ -10,6 +10,8 @@ interface CodeInputProps {
   language: ProgrammingLanguage;
   onLanguageChange: (language: ProgrammingLanguage) => void;
   placeholder?: string;
+  onAnalyze: () => void;
+  isAnalyzing: boolean;
 }
 
 const SUPPORTED_LANGUAGES: ProgrammingLanguage[] = [
@@ -30,6 +32,8 @@ export default function CodeInput({
   language,
   onLanguageChange,
   placeholder = 'Paste your code here...',
+  onAnalyze,
+  isAnalyzing,
 }: CodeInputProps) {
   const [lineCount, setLineCount] = useState(1);
 
@@ -43,21 +47,30 @@ export default function CodeInput({
   return (
     <div className="panel p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <label htmlFor="code-input" className="text-sm font-medium">
-          Code
-        </label>
-        <select
-          id="language-select"
-          value={language}
-          onChange={(e) => onLanguageChange(e.target.value as ProgrammingLanguage)}
-          className="text-xs border border-border rounded px-2 py-1 bg-background focus:outline-none focus:ring-1 focus:ring-foreground/20"
+        <div className="flex items-center gap-3">
+          <label htmlFor="code-input" className="text-sm font-medium">
+            Code
+          </label>
+          <select
+            id="language-select"
+            value={language}
+            onChange={(e) => onLanguageChange(e.target.value as ProgrammingLanguage)}
+            className="text-xs border border-border rounded px-2 py-1 bg-background focus:outline-none focus:ring-1 focus:ring-foreground/20"
+          >
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <option key={lang} value={lang}>
+                {getLanguageName(lang)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          onClick={onAnalyze}
+          disabled={isAnalyzing || !value.trim()}
+          className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {SUPPORTED_LANGUAGES.map((lang) => (
-            <option key={lang} value={lang}>
-              {getLanguageName(lang)}
-            </option>
-          ))}
-        </select>
+          {isAnalyzing ? 'Analyzing...' : 'Analyze'}
+        </button>
       </div>
 
       <textarea
@@ -65,7 +78,7 @@ export default function CodeInput({
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full h-80 px-3 py-2 font-mono text-xs border border-border rounded bg-background resize-y focus:outline-none focus:ring-1 focus:ring-foreground/20"
+        className="w-full h-64 px-3 py-2 font-mono text-xs border border-border rounded bg-background resize-y focus:outline-none focus:ring-1 focus:ring-foreground/20"
         spellCheck={false}
       />
 

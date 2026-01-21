@@ -10,19 +10,19 @@ interface ReviewOptionsProps {
 const REVIEW_DESCRIPTIONS = {
   solid: {
     title: 'SOLID Principles',
-    description: 'SRP, OCP, LSP, ISP, DIP',
+    description: 'Checks for violations of SOLID design principles (SRP, OCP, LSP, ISP, DIP)',
   },
   hygiene: {
     title: 'Code Hygiene',
-    description: 'Naming, conventions, patterns',
+    description: 'Identifies code quality issues like console.log, var usage, TODO comments, and type safety',
   },
   unnecessary: {
     title: 'Dead Code',
-    description: 'Unused variables, redundant logic',
+    description: 'Detects commented-out code, empty catch blocks, and unused code',
   },
   simplicity: {
     title: 'Complexity',
-    description: 'Over-engineering, abstractions',
+    description: 'Analyzes code complexity including deep nesting, magic numbers, and unclear variable names',
   },
 };
 
@@ -35,31 +35,27 @@ export default function ReviewOptions({ options, onChange }: ReviewOptionsProps)
   };
 
   return (
-    <div className="panel p-4 space-y-3">
-      <label className="text-sm font-medium">Review</label>
-
-      <div className="space-y-2">
-        {(Object.keys(REVIEW_DESCRIPTIONS) as Array<keyof ReviewOptionsType>).map((key) => {
-          const { title, description } = REVIEW_DESCRIPTIONS[key];
-          return (
-            <label
-              key={key}
-              className="flex items-start gap-3 p-2 rounded cursor-pointer hover:bg-foreground/5 transition-colors"
-            >
-              <input
-                type="checkbox"
-                checked={options[key]}
-                onChange={() => handleToggle(key)}
-                className="mt-0.5 rounded border-border"
-              />
-              <div className="flex-1">
-                <div className="text-sm">{title}</div>
-                <div className="text-xs text-foreground/50">{description}</div>
-              </div>
-            </label>
-          );
-        })}
-      </div>
+    <div className="space-y-3">
+      {(Object.keys(REVIEW_DESCRIPTIONS) as Array<keyof ReviewOptionsType>).map((key) => {
+        const { title, description } = REVIEW_DESCRIPTIONS[key];
+        return (
+          <label
+            key={key}
+            className="flex items-start gap-3 cursor-pointer hover:bg-foreground/5 p-2 rounded transition-colors"
+          >
+            <input
+              type="checkbox"
+              checked={options[key]}
+              onChange={() => handleToggle(key)}
+              className="mt-0.5 rounded border-border"
+            />
+            <div className="flex-1">
+              <div className="text-sm font-medium">{title}</div>
+              <div className="text-xs text-foreground/60">{description}</div>
+            </div>
+          </label>
+        );
+      })}
     </div>
   );
 }
