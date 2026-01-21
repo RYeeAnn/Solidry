@@ -20,6 +20,7 @@ export default function ReviewPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
   const handleAnalyze = async () => {
     // Validation
@@ -73,6 +74,22 @@ export default function ReviewPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Demo Mode Banner */}
+        {isDemoMode && (
+          <div className="mb-6 p-4 bg-blue-500/10 border-2 border-blue-500/30 rounded-lg">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">🎭</div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-foreground mb-1">Demo Mode Active</h3>
+                <p className="text-sm text-foreground/70">
+                  You're using sample analysis without API calls. Results are simulated based on common code patterns.
+                  To use real AI analysis, add your Anthropic API key to <code className="bg-foreground/10 px-1 rounded">.env.local</code> and set <code className="bg-foreground/10 px-1 rounded">NEXT_PUBLIC_DEMO_MODE=false</code>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">

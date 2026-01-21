@@ -4,6 +4,7 @@ An AI-powered code review assistant that automates code quality checks for SOLID
 
 ## Features (Phase 1 MVP)
 
+- ✅ **Demo Mode** - Test without API key or costs
 - ✅ SOLID principles violation detection
 - ✅ Code hygiene analysis
 - ✅ Over-engineering detection (simplicity check)
@@ -19,35 +20,38 @@ An AI-powered code review assistant that automates code quality checks for SOLID
 
 ## Getting Started
 
-### Prerequisites
+### Quick Start (Demo Mode - No API Key Required!)
 
-- Node.js 18+ and npm
-- Anthropic API key
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Create `.env.local` file:
-   ```bash
-   cp .env.example .env.local
-   ```
-
-4. Add your Anthropic API key to `.env.local`:
-   ```
-   ANTHROPIC_API_KEY=your_api_key_here
-   ```
-
-5. Run the development server:
+2. Run the development server:
    ```bash
    npm run dev
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000)
+3. Open [http://localhost:3000](http://localhost:3000)
+
+**That's it!** The app runs in **Demo Mode** by default, providing realistic sample analysis without API costs.
+
+### Using Real AI Analysis (Optional)
+
+To switch from Demo Mode to real Claude AI analysis:
+
+1. Get an API key from [Anthropic Console](https://console.anthropic.com/)
+   - Note: Requires credit card, but includes $5 free credits
+
+2. Update `.env.local`:
+   ```bash
+   ANTHROPIC_API_KEY=your_api_key_here
+   NEXT_PUBLIC_DEMO_MODE=false
+   ```
+
+3. Restart the dev server
+
+See [DEMO_MODE.md](DEMO_MODE.md) for more details.
 
 ## Usage
 

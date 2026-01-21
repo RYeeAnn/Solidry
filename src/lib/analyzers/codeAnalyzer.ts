@@ -2,6 +2,7 @@ import { ReviewConfig, AnalysisResult, ReviewType } from '@/types';
 import { analyzeCodeWithClaude } from '../ai/claude';
 import { detectLanguage, isGitDiff, extractCodeFromDiff } from '@/utils/languageDetect';
 import { calculateScore, getGrade, calculateMetrics } from '@/utils/scoring';
+import { getDemoAnalysis, isDemoMode } from '../ai/demoMode';
 
 /**
  * Main code analyzer that orchestrates the entire analysis process
@@ -32,8 +33,10 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
     ? config.reviewTypes
     : ['solid', 'hygiene'] as ReviewType[]; // Default review types
 
-  // Step 4: Call AI for analysis
-  const aiResponse = await analyzeCodeWithClaude(codeToAnalyze, language, reviewTypes);
+  // Step 4: Call AI for analysis (or use demo mode)
+  const aiResponse = isDemoMode()
+    ? getDemoAnalysis(codeToAnalyze)
+    : await analyzeCodeWithClaude(codeToAnalyze, language, reviewTypes);
 
   // Step 5: Calculate score and grade
   const score = calculateScore(aiResponse.issues);
