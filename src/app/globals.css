@@ -4,25 +4,47 @@
 
 @layer base {
   :root {
-    --background: 255 255 255;
-    --foreground: 10 10 10;
+    --background: 248 250 252;
+    --foreground: 15 23 42;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --background: 10 10 10;
-      --foreground: 255 255 255;
+      --background: 15 23 42;
+      --foreground: 248 250 252;
     }
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  * {
+    @apply scroll-smooth;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/50;
+  }
+
+  .card {
+    @apply rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-soft;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-lg font-semibold shadow-lg hover:shadow-glow hover:scale-105 active:scale-95 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-white dark:bg-slate-800 text-foreground border border-slate-300 dark:border-slate-700 rounded-lg font-semibold hover:border-primary-500 hover:text-primary-600 transition-all duration-200;
   }
 }
 
 @layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-400;
   }
 }
