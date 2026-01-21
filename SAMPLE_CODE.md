@@ -1,6 +1,6 @@
-# Sample Code for Testing SOLIDify
+# Sample Code for Testing Solidry
 
-Use these code samples to test SOLIDify's analysis capabilities.
+Use these code samples to test Solidry's analysis capabilities.
 
 ## Example 1: Multiple Issues (Good for Demo)
 
@@ -172,4 +172,4 @@ index 123abc..456def 100644
  }
 ```
 
-SOLIDify will analyze only the added lines (marked with `+`).
+Solidry will analyze only the added lines (marked with `+`).

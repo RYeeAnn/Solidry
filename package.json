@@ -1,8 +1,8 @@
 {
-  "name": "solidify",
+  "name": "solidry",
   "version": "0.1.0",
   "private": true,
-  "description": "AI-powered code review assistant for SOLID principles and code quality",
+  "description": "AI-powered code review assistant for SOLID and DRY principles",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

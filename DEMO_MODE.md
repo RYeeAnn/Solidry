@@ -2,7 +2,7 @@
 
 ## What is Demo Mode?
 
-Demo Mode allows you to test and showcase SOLIDify **without needing an Anthropic API key** or paying for API access. It provides realistic sample analysis based on common code patterns.
+Demo Mode allows you to test and showcase Solidry **without needing an Anthropic API key** or paying for API access. It provides realistic sample analysis based on common code patterns.
 
 ## How It Works
 

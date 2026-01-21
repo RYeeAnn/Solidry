@@ -1,4 +1,4 @@
-# Design Philosophy - SOLIDify
+# Design Philosophy - Solidry
 
 ## Inspiration: Ryo Lu (Cursor, Notion)
 
@@ -158,7 +158,7 @@ xl: 2rem (32px)
 
 ## The Goal
 
-**SOLIDify should feel like a professional developer tool.**
+**Solidry should feel like a professional developer tool.**
 
 Not:
 - A marketing website

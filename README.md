@@ -1,6 +1,6 @@
-# SOLIDify - AI Code Quality Review Assistant
+# Solidry - AI Code Quality Review Assistant
 
-An AI-powered code review assistant that automates code quality checks for SOLID principles, code hygiene, complexity, and dead code detection. Built with a clean, professional interface inspired by modern developer tools.
+An AI-powered code review assistant that automates code quality checks for SOLID and DRY principles, code hygiene, complexity, and dead code detection. Built with a clean, professional interface inspired by modern developer tools.
 
 ## Features
 
@@ -34,8 +34,8 @@ An AI-powered code review assistant that automates code quality checks for SOLID
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/solidify.git
-   cd solidify
+   git clone https://github.com/yourusername/solidry.git
+   cd solidry
    ```
 
 2. **Install dependencies:**
@@ -141,7 +141,7 @@ Analyzes:
 ## Project Structure
 
 ```
-solidify/
+solidry/
 ├── src/
 │   ├── app/              # Next.js app router
 │   │   ├── page.tsx      # Main application page
@@ -184,7 +184,7 @@ npm start
 
 ## Design Philosophy
 
-SOLIDify follows a **tool-first** design approach inspired by Cursor and Notion:
+Solidry follows a **tool-first** design approach inspired by Cursor and Notion:
 
 - Clean, minimal interface with neutral colors
 - Typography-driven hierarchy
@@ -241,7 +241,7 @@ MIT
 
 ## Support
 
-If you find SOLIDify helpful, please consider:
+If you find Solidry helpful, please consider:
 - Starring the repository
 - Sharing with your team
 - Contributing improvements

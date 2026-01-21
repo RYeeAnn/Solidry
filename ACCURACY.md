@@ -1,6 +1,6 @@
-# SOLIDify Accuracy & Validation
+# Solidry Accuracy & Validation
 
-This document provides transparent metrics about SOLIDify's analysis capabilities, limitations, and when to trust the results.
+This document provides transparent metrics about Solidry's analysis capabilities, limitations, and when to trust the results.
 
 **Last Updated:** January 21, 2026
 **Test Suite:** 33 unit tests, 8 validation fixtures
@@ -10,7 +10,7 @@ This document provides transparent metrics about SOLIDify's analysis capabilitie
 
 ## Testing Methodology
 
-SOLIDify has been validated through:
+Solidry has been validated through:
 
 1. **Unit Tests** - Core utilities (scoring, language detection, parsing)
 2. **Test Fixtures** - Known SOLID violations for each principle
@@ -57,7 +57,7 @@ Based on test fixtures with obvious violations:
 
 ## Confidence Scoring System
 
-SOLIDify provides confidence scores (0-100%) based on:
+Solidry provides confidence scores (0-100%) based on:
 
 ### High Confidence (80-100%)
 - **AI Mode** with Claude 3.5 Sonnet
@@ -87,20 +87,20 @@ SOLIDify provides confidence scores (0-100%) based on:
 
 ## Known Limitations
 
-### What SOLIDify Does Well
+### What Solidry Does Well
 ✅ Detecting obvious SOLID violations (god classes, direct instantiation)
 ✅ Code hygiene issues (console.log, var, any types)
 ✅ Identifying hard-coded logic that should use polymorphism
 ✅ Flagging duplicate code patterns
 ✅ Suggesting dependency injection opportunities
 
-### What SOLIDify May Miss
+### What Solidry May Miss
 ⚠️ **Subtle LSP violations** - Complex inheritance contracts
 ⚠️ **Context-dependent issues** - Violations that require domain knowledge
 ⚠️ **False negatives** - Some valid code may have legitimate reasons for patterns
 ⚠️ **Language-specific idioms** - Patterns that are anti-patterns in one language but idiomatic in another
 
-### What SOLIDify Cannot Do
+### What Solidry Cannot Do
 ❌ **Understand business logic** - Cannot assess if the design solves the right problem
 ❌ **Detect all design patterns** - Only checks for common SOLID violations
 ❌ **Replace human judgment** - Context and trade-offs require human review
@@ -164,7 +164,7 @@ Estimated false positives (flagging valid code):
 
 ---
 
-## When to Trust SOLIDify
+## When to Trust Solidry
 
 ### ✅ Trust for Daily Workflow
 - Code reviews (second opinion)
@@ -191,7 +191,7 @@ Estimated false positives (flagging valid code):
 
 ## Improving Accuracy
 
-To get the best results from SOLIDify:
+To get the best results from Solidry:
 
 1. **Provide context** - Well-named variables and functions help AI understand intent
 2. **Reasonable size** - 20-200 lines per analysis works best
@@ -230,12 +230,12 @@ Test fixtures used for validation:
 
 | Tool Type | SOLID Detection | Code Hygiene | Context Awareness | Speed |
 |-----------|----------------|--------------|-------------------|-------|
-| **SOLIDify (AI)** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **Solidry (AI)** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
 | **ESLint/TSLint** | ⭐ | ⭐⭐⭐⭐⭐ | ⭐ | ⭐⭐⭐⭐⭐ |
 | **SonarQube** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ |
 | **Human Review** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐ |
 
-**Recommendation:** Use SOLIDify + Linters + Human Review for best results.
+**Recommendation:** Use Solidry + Linters + Human Review for best results.
 
 ---
 
@@ -245,7 +245,7 @@ Test fixtures used for validation:
 ```
 1. Write code
 2. Run linter (ESLint, Pylint, etc.)
-3. Analyze with SOLIDify
+3. Analyze with Solidry
 4. Review suggestions carefully
 5. Apply changes that make sense
 6. Peer review
@@ -280,7 +280,7 @@ This tool improves through:
 
 ## Bottom Line
 
-**SOLIDify is a code review assistant, not a replacement for human judgment.**
+**Solidry is a code review assistant, not a replacement for human judgment.**
 
 - **Trust level:** Medium-High for obvious violations
 - **Best for:** Learning, code reviews, refactoring guidance

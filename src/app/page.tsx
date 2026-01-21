@@ -100,7 +100,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-lg font-semibold">SOLIDify</h1>
+          <h1 className="text-lg font-semibold">Solidry</h1>
           {isDemoMode && (
             <span className="text-xs text-foreground/50">Demo Mode</span>
           )}

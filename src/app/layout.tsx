@@ -8,9 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'SOLIDify - AI Code Quality Review',
-  description: 'AI-powered code review assistant for SOLID principles, code hygiene, and quality analysis',
-  keywords: ['code review', 'SOLID principles', 'code quality', 'AI', 'static analysis'],
+  title: 'Solidry - AI Code Quality Review',
+  description: 'AI-powered code review assistant for SOLID and DRY principles, code hygiene, and quality analysis',
+  keywords: ['code review', 'SOLID principles', 'DRY principle', 'code quality', 'AI', 'static analysis'],
 };
 
 export default function RootLayout({

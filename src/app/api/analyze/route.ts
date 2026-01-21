@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     status: 'ok',
-    message: 'SOLIDify API is running',
+    message: 'Solidry API is running',
     apiKeyConfigured: !!process.env.ANTHROPIC_API_KEY,
   });
 }

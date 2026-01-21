@@ -1,7 +1,7 @@
 # UI/UX Improvements Summary
 
 ## Overview
-Complete redesign of SOLIDify with a focus on professional aesthetics, calming user experience, and trustworthy feel.
+Complete redesign of Solidry with a focus on professional aesthetics, calming user experience, and trustworthy feel.
 
 ## Design Philosophy
 
