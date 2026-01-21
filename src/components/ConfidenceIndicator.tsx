@@ -60,7 +60,7 @@ export default function ConfidenceIndicator({ confidence, metadata }: Confidence
                 <div className="text-foreground/70 space-y-1.5">
                   <p><strong className="text-foreground">Quality Score</strong> measures how good your code is (based on issues found).</p>
                   <p><strong className="text-foreground">Confidence Score</strong> measures how much you should trust the analysis (based on conditions like demo mode, code length, and language detection).</p>
-                  <p className="pt-1 text-foreground/60">Example: High quality (96/100) with high confidence (82%) means "Your code is excellent, and we're confident in this assessment."</p>
+                  <p className="pt-1 text-foreground/60">Example: High quality (96/100) with high confidence (82%) means &quot;Your code is excellent, and we&apos;re confident in this assessment.&quot;</p>
                 </div>
               </div>
             </div>

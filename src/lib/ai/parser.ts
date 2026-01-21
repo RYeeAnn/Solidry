@@ -31,37 +31,38 @@ export function parseAIResponse(responseText: string): AIAnalysisResponse {
     }
 
     // Validate each issue
-    const validatedIssues: CodeIssue[] = parsed.issues.map((issue: any, index: number) => {
-      if (typeof issue.line !== 'number') {
+    const validatedIssues: CodeIssue[] = parsed.issues.map((issue: unknown, index: number) => {
+      const issueRecord = issue as Record<string, unknown>;
+      if (typeof issueRecord.line !== 'number') {
         throw new Error(`Issue ${index}: line must be a number`);
       }
 
-      if (!['critical', 'warning', 'suggestion'].includes(issue.severity)) {
-        throw new Error(`Issue ${index}: invalid severity "${issue.severity}"`);
+      if (!['critical', 'warning', 'suggestion'].includes(issueRecord.severity as string)) {
+        throw new Error(`Issue ${index}: invalid severity "${issueRecord.severity}"`);
       }
 
-      if (!['solid', 'hygiene', 'unnecessary', 'complexity'].includes(issue.category)) {
-        throw new Error(`Issue ${index}: invalid category "${issue.category}"`);
+      if (!['solid', 'hygiene', 'unnecessary', 'complexity'].includes(issueRecord.category as string)) {
+        throw new Error(`Issue ${index}: invalid category "${issueRecord.category}"`);
       }
 
-      if (!issue.message || typeof issue.message !== 'string') {
+      if (!issueRecord.message || typeof issueRecord.message !== 'string') {
         throw new Error(`Issue ${index}: message is required`);
       }
 
-      if (!issue.suggestion || typeof issue.suggestion !== 'string') {
+      if (!issueRecord.suggestion || typeof issueRecord.suggestion !== 'string') {
         throw new Error(`Issue ${index}: suggestion is required`);
       }
 
       return {
-        line: issue.line,
-        severity: issue.severity,
-        category: issue.category,
-        principle: issue.principle || 'other',
-        message: issue.message,
-        explanation: issue.explanation,
-        suggestion: issue.suggestion,
-        codeSnippet: issue.codeSnippet,
-      };
+        line: issueRecord.line,
+        severity: issueRecord.severity,
+        category: issueRecord.category,
+        principle: issueRecord.principle || 'other',
+        message: issueRecord.message,
+        explanation: issueRecord.explanation,
+        suggestion: issueRecord.suggestion,
+        codeSnippet: issueRecord.codeSnippet,
+      } as CodeIssue;
     });
 
     // Validate metrics
