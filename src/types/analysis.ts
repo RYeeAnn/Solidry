@@ -7,6 +7,43 @@ import { ReviewType, ProgrammingLanguage } from './review';
 export type QualityGrade = 'A' | 'B' | 'C' | 'D' | 'F';
 
 /**
+ * Confidence metadata for analysis
+ */
+export interface ConfidenceMetadata {
+  /** Overall confidence (0-100) */
+  overall: number;
+
+  /** Language detection confidence (0-100) */
+  languageDetection: number;
+
+  /** Issue accuracy confidence (0-100) */
+  issueAccuracy: number;
+
+  /** Factors affecting confidence */
+  factors: string[];
+
+  /** Confidence level */
+  level: 'high' | 'medium' | 'low';
+}
+
+/**
+ * Analysis performance and metadata
+ */
+export interface AnalysisMetadata {
+  /** Analysis duration in milliseconds */
+  analysisTimeMs: number;
+
+  /** Model used for analysis */
+  modelVersion: string;
+
+  /** Whether demo mode was used */
+  isDemoMode: boolean;
+
+  /** Number of lines analyzed */
+  linesAnalyzed: number;
+}
+
+/**
  * Overall analysis result
  */
 export interface AnalysisResult {
@@ -33,6 +70,12 @@ export interface AnalysisResult {
 
   /** Timestamp of the analysis */
   timestamp: Date;
+
+  /** Confidence in analysis results */
+  confidence: ConfidenceMetadata;
+
+  /** Analysis metadata */
+  metadata: AnalysisMetadata;
 }
 
 /**

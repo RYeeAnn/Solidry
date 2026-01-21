@@ -23,6 +23,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Log warnings if any (language mismatch, etc.)
+    if (validation.warnings && validation.warnings.length > 0) {
+      console.warn('Validation warnings:', validation.warnings);
+    }
+
     // Build review configuration with defaults
     const config: ReviewConfig = {
       code: body.code,

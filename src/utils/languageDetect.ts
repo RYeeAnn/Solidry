@@ -104,6 +104,131 @@ export function detectLanguage(code: string, filename?: string): ProgrammingLang
 }
 
 /**
+ * Checks if the input appears to be valid code
+ * Returns true if it looks like code, false otherwise
+ */
+export function isValidCode(code: string): boolean {
+  const trimmed = code.trim();
+
+  // Minimum length check - very lenient for snippets
+  if (trimmed.length < 5) {
+    return false;
+  }
+
+  // For small snippets (< 50 chars), be more lenient
+  const isSmallSnippet = trimmed.length < 50;
+
+  // Check for common code patterns
+  const codeIndicators = [
+    /function\s+\w+/i,
+    /class\s+\w+/i,
+    /def\s+\w+/i,
+    /const\s+\w+/i,
+    /let\s+\w+/i,
+    /var\s+\w+/i,
+    /import\s+/i,
+    /from\s+\w+\s+import/i,
+    /public\s+(class|void|static)/i,
+    /private\s+\w+/i,
+    /\w+\s*\([^)]*\)\s*{/,  // Function with braces
+    /=>\s*{/,              // Arrow function
+    /if\s*\(/,             // Conditional
+    /for\s*\(/,            // Loop
+    /while\s*\(/,          // Loop
+    /#include\s*[<"]/,     // C/C++ include
+    /package\s+\w+/,       // Go/Java package
+    /namespace\s+\w+/,     // C#/C++ namespace
+    /interface\s+\w+/i,    // Interface definition
+    /struct\s+\w+/i,       // Struct definition
+    /fn\s+\w+/,            // Rust function
+    /impl\s+\w+/,          // Rust impl
+    /return\s+/i,          // Return statement
+  ];
+
+  // Check for code structure indicators
+  const structureIndicators = [
+    /[{}\[\]();]/,         // Brackets and parentheses
+    /==/,                  // Comparison
+    /\+\+|--/,            // Increment/decrement
+    /->/,                  // Arrow operator
+    /::/,                  // Scope resolution
+    /\w+\.\w+/,           // Property access
+    /[+\-*/%]=?/,         // Arithmetic operators
+  ];
+
+  // Count matches
+  let indicatorMatches = 0;
+  for (const pattern of codeIndicators) {
+    if (pattern.test(trimmed)) {
+      indicatorMatches++;
+    }
+  }
+
+  // Check for structure
+  let structureMatches = 0;
+  for (const pattern of structureIndicators) {
+    if (pattern.test(trimmed)) {
+      structureMatches++;
+    }
+  }
+
+  // For small snippets, be more lenient (1 indicator OR 1 structure match)
+  if (isSmallSnippet) {
+    return indicatorMatches >= 1 || structureMatches >= 1;
+  }
+
+  // For larger code, require at least 1 code indicator OR 2 structure indicators
+  return indicatorMatches >= 1 || structureMatches >= 2;
+}
+
+/**
+ * Checks if there's a language mismatch between user selection and detected language
+ * Returns warning message if mismatch detected, null otherwise
+ */
+export function checkLanguageMismatch(
+  userSelectedLanguage: ProgrammingLanguage,
+  code: string
+): string | null {
+  // Skip if auto-detect is selected
+  if (userSelectedLanguage === 'auto') {
+    return null;
+  }
+
+  // Detect the actual language
+  const detectedLanguage = detectLanguage(code);
+
+  // If we can't detect any language, the code might be invalid
+  if (detectedLanguage === 'auto') {
+    return `Selected ${getLanguageName(userSelectedLanguage)} but couldn't detect valid code patterns`;
+  }
+
+  // Handle JavaScript/TypeScript ambiguity
+  // Don't warn if code is ambiguous between JS and TS
+  if (
+    (userSelectedLanguage === 'javascript' && detectedLanguage === 'typescript') ||
+    (userSelectedLanguage === 'typescript' && detectedLanguage === 'javascript')
+  ) {
+    // Check if there are actual TypeScript-specific features
+    const hasTypeScriptFeatures = /:\s*(string|number|boolean|any|void|never)\b|interface\s+\w+|type\s+\w+\s*=|<\w+>/.test(code);
+
+    // Only warn if TS features are detected but JS is selected
+    if (detectedLanguage === 'typescript' && userSelectedLanguage === 'javascript' && hasTypeScriptFeatures) {
+      return `Selected ${getLanguageName(userSelectedLanguage)} but the code appears to be ${getLanguageName(detectedLanguage)}`;
+    }
+
+    // Otherwise, don't warn (code is ambiguous)
+    return null;
+  }
+
+  // Check for mismatch
+  if (detectedLanguage !== userSelectedLanguage) {
+    return `Selected ${getLanguageName(userSelectedLanguage)} but the code appears to be ${getLanguageName(detectedLanguage)}`;
+  }
+
+  return null;
+}
+
+/**
  * Gets a human-readable language name
  */
 export function getLanguageName(lang: ProgrammingLanguage): string {

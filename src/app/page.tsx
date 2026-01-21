@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProgrammingLanguage, ReviewOptions as ReviewOptionsType, AnalysisResult } from '@/types';
 import CodeInput from '@/components/CodeInput';
-import ReviewOptions from '@/components/ReviewOptions';
 import ScoreCard from '@/components/ScoreCard';
 import ResultsSummary from '@/components/ResultsSummary';
 import CodeViewer from '@/components/CodeViewer';
 import ExampleCodeSelector from '@/components/ExampleCodeSelector';
+import ConfidenceIndicator from '@/components/ConfidenceIndicator';
+import { checkLanguageMismatch } from '@/utils/languageDetect';
 
 export default function HomePage() {
   const [code, setCode] = useState('');
@@ -21,6 +22,7 @@ export default function HomePage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
   const handleAnalyze = async () => {
@@ -76,7 +78,22 @@ export default function HomePage() {
     setLanguage(exampleLanguage);
     setResult(null);
     setError(null);
+    setWarning(null);
   };
+
+  // Check for language mismatch whenever code or language changes (with debounce)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (code.trim().length > 0) {
+        const mismatchWarning = checkLanguageMismatch(language, code);
+        setWarning(mismatchWarning);
+      } else {
+        setWarning(null);
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [code, language]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -102,19 +119,27 @@ export default function HomePage() {
               onLanguageChange={setLanguage}
               onAnalyze={handleAnalyze}
               isAnalyzing={isAnalyzing}
+              reviewOptions={reviewOptions}
+              onReviewOptionsChange={setReviewOptions}
             />
 
             {/* Example Code Selector */}
-            <ExampleCodeSelector onSelectExample={handleSelectExample} />
+            <ExampleCodeSelector onSelectExample={handleSelectExample} language={language} />
 
-            {/* Review Options */}
-            <div className="panel p-4 space-y-3">
-              <label className="text-sm font-medium">Review</label>
-              <ReviewOptions
-                options={reviewOptions}
-                onChange={setReviewOptions}
-              />
-            </div>
+            {warning && (
+              <div className="panel p-3 border-yellow-500/20 bg-yellow-500/5 flex items-start justify-between gap-2">
+                <p className="text-sm text-yellow-700 dark:text-yellow-400 flex-1">{warning}</p>
+                <button
+                  onClick={() => setWarning(null)}
+                  className="text-yellow-700 dark:text-yellow-400 hover:text-yellow-900 dark:hover:text-yellow-200 transition-colors"
+                  aria-label="Dismiss warning"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
 
             {error && (
               <div className="panel p-3 border-red-500/20 bg-red-500/5">
@@ -128,6 +153,10 @@ export default function HomePage() {
             {result ? (
               <>
                 <ScoreCard score={result.score} grade={result.grade} />
+                <ConfidenceIndicator
+                  confidence={result.confidence}
+                  metadata={result.metadata}
+                />
                 <ResultsSummary
                   issues={result.issues}
                   metrics={result.metrics}

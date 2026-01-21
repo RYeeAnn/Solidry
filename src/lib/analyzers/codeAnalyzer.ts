@@ -1,13 +1,16 @@
 import { ReviewConfig, AnalysisResult, ReviewType } from '@/types';
 import { analyzeCodeWithClaude } from '../ai/claude';
-import { detectLanguage, isGitDiff, extractCodeFromDiff } from '@/utils/languageDetect';
+import { detectLanguage, isGitDiff, extractCodeFromDiff, isValidCode, checkLanguageMismatch } from '@/utils/languageDetect';
 import { calculateScore, getGrade, calculateMetrics } from '@/utils/scoring';
 import { getDemoAnalysis, isDemoMode } from '../ai/demoMode';
+import { calculateConfidence } from '../confidence/confidenceCalculator';
 
 /**
  * Main code analyzer that orchestrates the entire analysis process
  */
 export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult> {
+  const startTime = Date.now();
+
   // Step 1: Determine the actual code to analyze
   let codeToAnalyze = config.code;
   let inputType = config.inputType;
@@ -23,9 +26,14 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
   }
 
   // Step 2: Detect or use specified language
+  const specifiedLanguage = config.language;
   let language = config.language;
   if (language === 'auto') {
     language = detectLanguage(codeToAnalyze);
+    // If auto-detect fails, default to TypeScript as fallback
+    if (language === 'auto') {
+      language = 'typescript';
+    }
   }
 
   // Step 3: Validate review types
@@ -34,7 +42,8 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
     : ['solid', 'hygiene'] as ReviewType[]; // Default review types
 
   // Step 4: Call AI for analysis (or use demo mode)
-  const aiResponse = isDemoMode()
+  const demoMode = isDemoMode();
+  const aiResponse = demoMode
     ? getDemoAnalysis(codeToAnalyze, reviewTypes)
     : await analyzeCodeWithClaude(codeToAnalyze, language, reviewTypes);
 
@@ -45,7 +54,20 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
   // Step 6: Recalculate metrics to ensure accuracy
   const metrics = calculateMetrics(aiResponse.issues);
 
-  // Step 7: Build final result
+  // Step 7: Calculate confidence
+  const confidence = calculateConfidence(
+    codeToAnalyze,
+    language,
+    specifiedLanguage,
+    aiResponse.issues,
+    demoMode
+  );
+
+  // Step 8: Build metadata
+  const analysisTimeMs = Date.now() - startTime;
+  const linesAnalyzed = codeToAnalyze.split('\n').filter(l => l.trim().length > 0).length;
+
+  // Step 9: Build final result
   const result: AnalysisResult = {
     issues: aiResponse.issues,
     metrics,
@@ -55,6 +77,13 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
     reviewTypes,
     language,
     timestamp: new Date(),
+    confidence,
+    metadata: {
+      analysisTimeMs,
+      modelVersion: demoMode ? 'Demo Mode (Pattern-Based)' : 'Claude 3.5 Sonnet',
+      isDemoMode: demoMode,
+      linesAnalyzed,
+    },
   };
 
   return result;
@@ -66,8 +95,10 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
 export function validateReviewConfig(config: Partial<ReviewConfig>): {
   valid: boolean;
   errors: string[];
+  warnings: string[];
 } {
   const errors: string[] = [];
+  const warnings: string[] = [];
 
   if (!config.code || config.code.trim().length === 0) {
     errors.push('Code is required');
@@ -81,8 +112,24 @@ export function validateReviewConfig(config: Partial<ReviewConfig>): {
     errors.push('At least one review type must be selected');
   }
 
+  // Validate that input appears to be code
+  if (config.code && config.code.trim().length > 0) {
+    if (!isValidCode(config.code)) {
+      errors.push('The input does not appear to be valid code. Please paste actual source code.');
+    }
+
+    // Check for language mismatch
+    if (config.language && config.language !== 'auto') {
+      const mismatchWarning = checkLanguageMismatch(config.language, config.code);
+      if (mismatchWarning) {
+        warnings.push(mismatchWarning);
+      }
+    }
+  }
+
   return {
     valid: errors.length === 0,
     errors,
+    warnings,
   };
 }

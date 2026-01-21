@@ -1,30 +1,12 @@
 'use client';
 
 import { ReviewOptions as ReviewOptionsType } from '@/types';
+import { REVIEW_DESCRIPTIONS } from '@/constants/reviewDescriptions';
 
 interface ReviewOptionsProps {
   options: ReviewOptionsType;
   onChange: (options: ReviewOptionsType) => void;
 }
-
-const REVIEW_DESCRIPTIONS = {
-  solid: {
-    title: 'SOLID Principles',
-    description: 'Checks for violations of SOLID design principles (SRP, OCP, LSP, ISP, DIP)',
-  },
-  hygiene: {
-    title: 'Code Hygiene',
-    description: 'Identifies code quality issues like console.log, var usage, TODO comments, and type safety',
-  },
-  unnecessary: {
-    title: 'Dead Code',
-    description: 'Detects commented-out code, empty catch blocks, and unused code',
-  },
-  simplicity: {
-    title: 'Complexity',
-    description: 'Analyzes code complexity including deep nesting, magic numbers, and unclear variable names',
-  },
-};
 
 export default function ReviewOptions({ options, onChange }: ReviewOptionsProps) {
   const handleToggle = (key: keyof ReviewOptionsType) => {
