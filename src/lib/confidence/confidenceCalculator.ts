@@ -108,7 +108,7 @@ export function calculateConfidence(
 
   // 8. Add positive factors for high confidence
   if (level === 'high' && !isDemoMode) {
-    factors.unshift('AI-powered analysis with Claude 3.5 Sonnet');
+    factors.unshift('AI-powered analysis with Claude 4 Sonnet');
   }
 
   if (lineCount >= 10 && lineCount <= 300 && hasStructure) {

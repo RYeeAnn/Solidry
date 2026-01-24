@@ -27,4 +27,6 @@ export type {
   AnalysisStatus,
   AnalysisState,
   AIAnalysisResponse,
+  FileAnalysisResult,
+  MultiFileAnalysisResult,
 } from './analysis';

@@ -41,6 +41,15 @@ export interface AnalysisMetadata {
 
   /** Number of lines analyzed */
   linesAnalyzed: number;
+
+  /** Whether this result was served from cache */
+  fromCache?: boolean;
+
+  /** Number of times this result has been served from cache */
+  cacheHits?: number;
+
+  /** ISO timestamp when result was cached */
+  cachedAt?: string;
 }
 
 /**
@@ -99,4 +108,47 @@ export interface AIAnalysisResponse {
   issues: CodeIssue[];
   summary: string;
   metrics: IssueMetrics;
+}
+
+/**
+ * Single file analysis result for multi-file analysis
+ */
+export interface FileAnalysisResult {
+  /** File name */
+  fileName: string;
+
+  /** File-specific analysis result */
+  result: AnalysisResult;
+}
+
+/**
+ * Multi-file analysis result
+ */
+export interface MultiFileAnalysisResult {
+  /** Individual file results */
+  files: FileAnalysisResult[];
+
+  /** Aggregate score across all files */
+  aggregateScore: number;
+
+  /** Aggregate grade */
+  aggregateGrade: QualityGrade;
+
+  /** Total metrics across all files */
+  aggregateMetrics: IssueMetrics;
+
+  /** Overall summary */
+  overallSummary: string;
+
+  /** Cross-file issues (e.g., duplicated code across files) */
+  crossFileIssues: CodeIssue[];
+
+  /** Total analysis time */
+  totalAnalysisTimeMs: number;
+
+  /** Total files analyzed */
+  totalFiles: number;
+
+  /** Total lines analyzed */
+  totalLinesAnalyzed: number;
 }

@@ -4,6 +4,7 @@ import { detectLanguage, isGitDiff, extractCodeFromDiff, isValidCode, checkLangu
 import { calculateScore, getGrade, calculateMetrics } from '@/utils/scoring';
 import { getDemoAnalysis, isDemoMode } from '../ai/demoMode';
 import { calculateConfidence } from '../confidence/confidenceCalculator';
+import { analysisCache } from '../cache';
 
 /**
  * Main code analyzer that orchestrates the entire analysis process
@@ -41,20 +42,33 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
     ? config.reviewTypes
     : ['solid', 'hygiene'] as ReviewType[]; // Default review types
 
-  // Step 4: Call AI for analysis (or use demo mode)
+  // Step 4: Check cache first (only for non-demo mode to save real API calls)
   const demoMode = isDemoMode();
+
+  if (!demoMode) {
+    const cachedResult = analysisCache.get(codeToAnalyze, language, reviewTypes);
+    if (cachedResult) {
+      // Return cached result with updated timestamp
+      return {
+        ...cachedResult,
+        timestamp: new Date(),
+      };
+    }
+  }
+
+  // Step 5: Call AI for analysis (or use demo mode)
   const aiResponse = demoMode
     ? getDemoAnalysis(codeToAnalyze, reviewTypes)
     : await analyzeCodeWithClaude(codeToAnalyze, language, reviewTypes);
 
-  // Step 5: Calculate score and grade
+  // Step 6: Calculate score and grade
   const score = calculateScore(aiResponse.issues);
   const grade = getGrade(score);
 
-  // Step 6: Recalculate metrics to ensure accuracy
+  // Step 7: Recalculate metrics to ensure accuracy
   const metrics = calculateMetrics(aiResponse.issues);
 
-  // Step 7: Calculate confidence
+  // Step 8: Calculate confidence
   const confidence = calculateConfidence(
     codeToAnalyze,
     language,
@@ -63,11 +77,11 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
     demoMode
   );
 
-  // Step 8: Build metadata
+  // Step 9: Build metadata
   const analysisTimeMs = Date.now() - startTime;
   const linesAnalyzed = codeToAnalyze.split('\n').filter(l => l.trim().length > 0).length;
 
-  // Step 9: Build final result
+  // Step 10: Build final result
   const result: AnalysisResult = {
     issues: aiResponse.issues,
     metrics,
@@ -80,11 +94,16 @@ export async function analyzeCode(config: ReviewConfig): Promise<AnalysisResult>
     confidence,
     metadata: {
       analysisTimeMs,
-      modelVersion: demoMode ? 'Demo Mode (Pattern-Based)' : 'Claude 3.5 Sonnet',
+      modelVersion: demoMode ? 'Demo Mode (Pattern-Based)' : 'Claude 4 Sonnet',
       isDemoMode: demoMode,
       linesAnalyzed,
     },
   };
+
+  // Step 11: Cache the result (only for non-demo mode)
+  if (!demoMode) {
+    analysisCache.set(codeToAnalyze, language, reviewTypes, result);
+  }
 
   return result;
 }

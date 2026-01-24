@@ -24,7 +24,7 @@ An AI-powered code review assistant that automates code quality checks for SOLID
 ## Tech Stack
 
 - **Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS
-- **AI:** Anthropic Claude 3.5 Sonnet (200K context window)
+- **AI:** Anthropic Claude 4 Sonnet (200K context window)
 - **Deployment:** Vercel-ready
 - **Design:** Minimal, professional UI inspired by Cursor and Notion
 

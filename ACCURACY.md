@@ -4,7 +4,7 @@ This document provides transparent metrics about Solidry's analysis capabilities
 
 **Last Updated:** January 21, 2026
 **Test Suite:** 33 unit tests, 8 validation fixtures
-**AI Model:** Claude 3.5 Sonnet (claude-3-5-sonnet-20241022)
+**AI Model:** Claude 4 Sonnet (claude-3-5-sonnet-20241022)
 
 ---
 
@@ -60,7 +60,7 @@ Based on test fixtures with obvious violations:
 Solidry provides confidence scores (0-100%) based on:
 
 ### High Confidence (80-100%)
-- **AI Mode** with Claude 3.5 Sonnet
+- **AI Mode** with Claude 4 Sonnet
 - Well-structured code (20-200 lines)
 - Clear language syntax
 - Specific, unambiguous violations
@@ -128,7 +128,7 @@ Solidry provides confidence scores (0-100%) based on:
 - Limited to obvious issues
 - No context awareness
 
-### AI Mode (Claude 3.5 Sonnet)
+### AI Mode (Claude 4 Sonnet)
 **Accuracy:** ~75-85%
 **Speed:** 2-5 seconds
 **Cost:** API usage

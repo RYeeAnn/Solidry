@@ -1,23 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { analyzeCode, validateReviewConfig } from '@/lib/analyzers';
+import { analyzeMultipleFiles, validateMultiFileConfig } from '@/lib/analyzers';
 import { rateLimiter, getClientIp } from '@/lib/rateLimit';
 import { isDemoMode } from '@/lib/ai/demoMode';
-import { ReviewConfig } from '@/types';
+import { ReviewType, ProgrammingLanguage } from '@/types';
+
+interface FilePayload {
+  name: string;
+  content: string;
+  language: ProgrammingLanguage;
+}
+
+interface MultiAnalyzeRequest {
+  files: FilePayload[];
+  reviewTypes: ReviewType[];
+}
 
 /**
- * POST /api/analyze
- * Analyzes code and returns issues, score, and suggestions
+ * POST /api/analyze-multi
+ * Analyzes multiple files and returns aggregated results
  */
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting only applies to real API calls (not demo mode)
+    // For multi-file, we consume N rate limit tokens (one per file)
     if (!isDemoMode()) {
       const clientIp = getClientIp(request);
       const rateLimitCheck = rateLimiter.check(clientIp);
-      console.log(`[Rate Limit Check] IP ${clientIp}: ${rateLimitCheck.remaining} remaining, allowed: ${rateLimitCheck.allowed}`);
+      console.log(`[Rate Limit Check - Multi] IP ${clientIp}: ${rateLimitCheck.remaining} remaining, allowed: ${rateLimitCheck.allowed}`);
 
       if (!rateLimitCheck.allowed) {
-        console.log(`[Rate Limit BLOCKED] IP ${clientIp}: exceeded limit of ${rateLimitCheck.limit}`);
+        console.log(`[Rate Limit BLOCKED - Multi] IP ${clientIp}: exceeded limit of ${rateLimitCheck.limit}`);
         const headers = rateLimiter.getHeaders(rateLimitCheck);
         return NextResponse.json(
           {
@@ -33,14 +45,18 @@ export async function POST(request: NextRequest) {
         );
       }
     } else {
-      console.log('[Rate Limit] Demo mode - rate limiting bypassed');
+      console.log('[Rate Limit - Multi] Demo mode - rate limiting bypassed');
     }
 
     // Parse request body
-    const body = await request.json();
+    const body: MultiAnalyzeRequest = await request.json();
 
     // Validate the configuration
-    const validation = validateReviewConfig(body);
+    const validation = validateMultiFileConfig({
+      files: body.files,
+      reviewTypes: body.reviewTypes,
+    });
+
     if (!validation.valid) {
       return NextResponse.json(
         {
@@ -51,37 +67,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log warnings if any (language mismatch, etc.)
-    if (validation.warnings && validation.warnings.length > 0) {
-      console.warn('Validation warnings:', validation.warnings);
-    }
-
-    // Build review configuration with defaults
-    const config: ReviewConfig = {
-      code: body.code,
-      language: body.language || 'auto',
-      reviewTypes: body.reviewTypes || ['solid', 'hygiene'],
-      inputType: body.inputType || 'code',
-      context: body.context,
-    };
+    // Build file inputs
+    const files = body.files.map((f) => ({
+      name: f.name,
+      content: f.content,
+      language: f.language || 'auto',
+    }));
 
     // Perform the analysis
-    const result = await analyzeCode(config);
+    const result = await analyzeMultipleFiles({
+      files,
+      reviewTypes: body.reviewTypes || ['solid', 'hygiene'],
+    });
 
     // Consume rate limit only after successful API call (and only for real API mode)
-    // IMPORTANT: Don't consume rate limit if result was served from cache (no API call was made)
+    // Multi-file analysis counts as one request to be fair
     let rateLimitHeaders: Record<string, string> = {};
-    if (!isDemoMode() && !result.metadata.fromCache) {
+    if (!isDemoMode()) {
       const clientIp = getClientIp(request);
       const consumeResult = rateLimiter.consume(clientIp);
       rateLimitHeaders = rateLimiter.getHeaders(consumeResult);
-      console.log(`[Rate Limit] IP ${clientIp}: consumed 1 request, ${consumeResult.remaining} remaining`);
-    } else if (result.metadata.fromCache) {
-      // Still include rate limit info in headers for cached results
-      const clientIp = getClientIp(request);
-      const checkResult = rateLimiter.check(clientIp);
-      rateLimitHeaders = rateLimiter.getHeaders(checkResult);
-      console.log(`[Cache Hit] IP ${clientIp}: served from cache, ${checkResult.remaining} requests remaining`);
+      console.log(`[Rate Limit - Multi] IP ${clientIp}: consumed 1 request for ${files.length} files, ${consumeResult.remaining} remaining`);
     }
 
     // Return the analysis result with rate limit headers
@@ -90,9 +96,8 @@ export async function POST(request: NextRequest) {
       headers: rateLimitHeaders,
     });
   } catch (error) {
-    console.error('Error in /api/analyze:', error);
+    console.error('Error in /api/analyze-multi:', error);
 
-    // Handle specific error types
     if (error instanceof Error) {
       if (error.message.includes('ANTHROPIC_API_KEY')) {
         return NextResponse.json(
@@ -124,7 +129,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generic error response
     return NextResponse.json(
       {
         error: 'Internal server error',
@@ -133,37 +137,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-/**
- * GET /api/analyze
- * Health check endpoint with rate limit status
- */
-export async function GET(request: NextRequest) {
-  const config = rateLimiter.getConfig();
-
-  // In non-demo mode, include rate limit info for the client
-  let rateLimitInfo = null;
-  if (!isDemoMode()) {
-    const clientIp = getClientIp(request);
-    const status = rateLimiter.check(clientIp);
-    rateLimitInfo = {
-      remaining: status.remaining,
-      limit: status.limit,
-      resetAt: status.resetAt.toISOString(),
-    };
-  }
-
-  return NextResponse.json({
-    status: 'ok',
-    message: 'Solidry API is running',
-    apiKeyConfigured: !!process.env.ANTHROPIC_API_KEY,
-    demoMode: isDemoMode(),
-    rateLimit: rateLimitInfo
-      ? {
-          ...rateLimitInfo,
-          dailyLimit: config.maxRequestsPerDay,
-        }
-      : null,
-  });
 }
