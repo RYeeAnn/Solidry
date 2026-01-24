@@ -13,7 +13,7 @@ const anthropic = new Anthropic({
 /**
  * Model to use for code analysis
  */
-const MODEL = 'claude-3-5-sonnet-20241022';
+const MODEL = 'claude-sonnet-4-20250514';
 
 /**
  * Analyzes code using Claude AI
