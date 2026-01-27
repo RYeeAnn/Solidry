@@ -117,10 +117,10 @@ export default function FileUpload({ onFileSelect, disabled = false }: FileUploa
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={`
-          panel p-4 border-2 border-dashed rounded-lg cursor-pointer
+          panel p-4 border-2 border-dashed rounded-xl cursor-pointer
           transition-all duration-200 text-center
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-foreground/30 hover:bg-foreground/5'}
-          ${isDragOver ? 'border-foreground/50 bg-foreground/10' : 'border-border'}
+          ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-accent/30 hover:bg-accent/5'}
+          ${isDragOver ? 'border-accent/50 bg-accent/10' : 'border-border'}
           ${error ? 'border-red-500/30 bg-red-500/5' : ''}
         `}
       >

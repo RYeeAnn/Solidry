@@ -37,9 +37,9 @@ export default function ConfidenceIndicator({ confidence, metadata }: Confidence
   };
 
   return (
-    <div className="panel p-4 space-y-4">
+    <div className="panel p-4 space-y-4 animate-fade-in" style={{ animationDelay: '0.05s' }}>
       {/* Confidence Level */}
-      <div className={`flex items-start gap-3 p-3 rounded border ${getConfidenceColorClasses(confidence.level)}`}>
+      <div className={`flex items-start gap-3 p-3 rounded-lg border ${getConfidenceColorClasses(confidence.level)}`}>
         <div className="flex-shrink-0 mt-0.5">
           {getConfidenceIcon(confidence.level)}
         </div>
@@ -55,7 +55,7 @@ export default function ConfidenceIndicator({ confidence, metadata }: Confidence
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-background border border-border rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 text-xs leading-relaxed">
+              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-background border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 text-xs leading-relaxed">
                 <div className="font-semibold mb-1.5 text-foreground">What is Confidence Score?</div>
                 <div className="text-foreground/70 space-y-1.5">
                   <p><strong className="text-foreground">Quality Score</strong> measures how good your code is (based on issues found).</p>
