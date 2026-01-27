@@ -18,6 +18,7 @@ import MultiFileUpload, { UploadedFile } from '@/components/MultiFileUpload';
 import MultiFileResults from '@/components/MultiFileResults';
 import AnalysisSkeleton from '@/components/AnalysisSkeleton';
 import { checkLanguageMismatch } from '@/utils/languageDetect';
+import { REVIEW_DESCRIPTIONS } from '@/constants/reviewDescriptions';
 
 type AnalysisMode = 'single' | 'multi';
 
@@ -374,23 +375,29 @@ export default function HomePage() {
                   {/* Review Options for Multi-file */}
                   <div className="pt-3 border-t border-border">
                     <div className="text-xs font-medium text-foreground/70 mb-2">Review Types:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {(Object.keys(reviewOptions) as Array<keyof ReviewOptionsType>).map((key) => (
-                        <label
-                          key={key}
-                          className="flex items-center gap-1.5 text-xs cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={reviewOptions[key]}
-                            onChange={() =>
-                              setReviewOptions({ ...reviewOptions, [key]: !reviewOptions[key] })
-                            }
-                            className="rounded border-border accent-accent"
-                          />
-                          <span className="capitalize">{key}</span>
-                        </label>
-                      ))}
+                    <div className="space-y-1">
+                      {(Object.keys(REVIEW_DESCRIPTIONS) as Array<keyof ReviewOptionsType>).map((key) => {
+                        const { title, description } = REVIEW_DESCRIPTIONS[key];
+                        return (
+                          <label
+                            key={key}
+                            className="flex items-start gap-2 cursor-pointer hover:bg-foreground/5 p-2 rounded-lg transition-colors"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={reviewOptions[key]}
+                              onChange={() =>
+                                setReviewOptions({ ...reviewOptions, [key]: !reviewOptions[key] })
+                              }
+                              className="mt-0.5 rounded border-border accent-accent"
+                            />
+                            <div className="flex-1">
+                              <div className="text-xs font-medium">{title}</div>
+                              <div className="text-[11px] text-foreground/60 leading-snug">{description}</div>
+                            </div>
+                          </label>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
