@@ -5,7 +5,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'SOLIDify - AI Code Quality Analyzer',
+  title: 'Solidry - AI Code Quality Analyzer',
   description:
     'Analyze your code against SOLID principles, code hygiene, complexity, and best practices. Powered by AI.',
 };

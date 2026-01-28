@@ -241,7 +241,7 @@ export default function HomePage() {
       <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div>
-            <h1 className="text-base font-semibold">SOLIDify</h1>
+            <h1 className="text-base font-semibold">Solidry</h1>
             <p className="text-[10px] text-foreground/40 -mt-0.5 hidden sm:block">AI Code Quality Analyzer</p>
           </div>
           {isDemoMode && (
@@ -562,7 +562,7 @@ export default function HomePage() {
             Built with Next.js, TypeScript &amp; Claude AI
           </div>
           <div className="text-xs text-foreground/30">
-            SOLIDify
+            Solidry
           </div>
         </div>
       </footer>
